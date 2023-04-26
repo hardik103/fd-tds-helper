@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FD Tax Helper
+    </title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="functions.js"></script>
+
+</head>
+<body>
+    <form id="details" align="center">
+    Principal<br>
+    <input type="number" class="textboxes" id="principal"><br>
+    Rate<br>
+    <input type="number" class="textboxes" id="rate"><br>
+    Time<br>
+    <input type="number" class="textboxes" id="time"><br>
+    <br>
+    AGE<br>
+    <label class="options"><input type="radio" name="age" class="age" value="40000">Less Than 60</label><br>
+    <label class="options"><input type="radio" name="age" class="age" value="50000">More Than 60</label><br>
+    <br>
+    <input type="button" class="buttons" value="Analyse" onclick="incomplete_data_check()"><br><br>
+    <input type="button" class="buttons" value="Clear Data" onclick="clear_data()">
+    <input type="reset" class="buttons" value="Clear Query">
+    </form>
+    <br>
+    <div id="analysis"></div>
+</body>
+</html>
