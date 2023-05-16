@@ -4,15 +4,187 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FD Tax Helper
+    <title>TDS Helper for FDs
     </title>
 
-    <link rel="stylesheet" href="style.css">
-    <script src="functions.js"></script>
+    <style>
+        #box{
+    background-color: darkcyan;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 100;
+    border-radius: 20px;
+}
+
+#box:hover{
+    background-color: rgb(31, 29, 29);
+}
+
+.textboxes{
+    background-color: darkcyan;
+}
+
+.textboxes:hover{
+    background-color: aquamarine;
+}
+
+.textboxes:focus{
+    background-color: rgb(67, 161, 227);
+}
+
+.options{
+    background-color: darkcyan;
+    border-radius: 20px;
+    border: 20px;
+    border-color: black;
+}
+
+.options:hover{
+    background-color: aquamarine;
+}
+
+.options:active{
+    background-color: rgb(67, 161, 227);
+}
+
+.buttons{
+    background-color: darkcyan;
+    border-radius: 20px;
+    font-size: large;
+}
+
+.buttons:hover{
+    background-color: aquamarine;
+}
+
+.buttons:active{
+    background-color: rgb(67, 161, 227);
+}
+
+.taxed{
+    color: crimson;
+}
+
+.untaxed{
+    color: #8be615;
+}
+
+#conclusion{
+    background-color: aquamarine;
+}
+    </style>
+    <script>
+        function incomplete_data_check(){
+    let principal = Number(document.getElementById('principal').value);
+    let rate = Number(document.getElementById('rate').value);
+    let time = Number(document.getElementById('time').value);
+    let checked_age,checked_frequency;
+
+    let age = document.getElementsByClassName('age');
+    for(let i=0;i<age.length;i++) {
+        if( age[i].checked ) {
+            checked_age = Number(i);
+        }
+    }
+
+    let frequency = document.getElementsByClassName('frequency');
+    for(let i=0;i<frequency.length;i++) {
+        if( frequency[i].checked ) {
+            checked_frequency = Number(i);
+        }
+    }
+
+    if( !principal || !rate || !time || checked_age==undefined || checked_frequency==undefined ){
+        alert("Incomplete Data");
+    }else if( principal<=0 || rate<=0 || time<=0 ){
+        alert("Invalid Data");
+    }else{
+        clear_data();
+        analyse(checked_age,checked_frequency);
+    }
+
+}
+
+function clear_data(){
+    document.getElementById('analysis').innerHTML="";
+}
+
+function analyse(checked_age,checked_frequency){
+    let principal = Number(document.getElementById('principal').value);
+    let rate = Number(document.getElementById('rate').value);
+    let time = Number(document.getElementById('time').value);
+    
+    let age = document.getElementsByClassName('age');
+    let limit = Number( age[checked_age].value);
+
+    let frequency = document.getElementsByClassName('age');
+    let compounded = Number( frequency[checked_frequency].value);
+    
+    let maximum_possible_amount=Math.pow(rate/100+1,time)*principal,maximum_possible_interest=maximum_possible_amount-principal;
+    let total_tax=0,generated_interest=0,generated_amount=0;
+    
+    let P=0,I=0,A=principal,year=0,tax,Ir
+    while(time--){
+        year++;
+        P = (Number(A)).toFixed(2);
+        I = (Number(P) * Number(rate) / Number(100)).toFixed(2);
+
+        if(I>limit){
+
+            tax = (Number(I) / 10).toFixed(2);
+            Ir = (Number(I) - Number(tax)).toFixed(2);
+            A = (Number(P) + Number(Ir)).toFixed(2);
+            document.getElementById('analysis').innerHTML += `
+            <div id="box" class="taxed">
+            <br>
+            ${year}<br>
+            Principal = ${P}<br>
+            Rate = ${rate}<br>
+            Interest Generated= ${I}<br>
+            Annual Interest exceeded the non-taxable limit of Rs. ${limit}.<br>
+            Tax(TDS) = 10% of Annual Interest<br>
+            Tax Amount(TDS) to be Deducted = ${tax}<br>
+            Interest to be Compounded after Tax(TDS) is Deducted = ${Ir}<br>
+            A = ${A}<br><br>
+            </div>
+            <br><br>`;
+
+            total_tax += Number(tax);
+            
+        }else{
+            
+            A = (Number(P) + Number(I)).toFixed(2);
+            document.getElementById('analysis').innerHTML += `
+            <div id="box" class="untaxed">
+            <br>
+            ${year}<br>
+            Principal = ${P}<br>
+            Rate = ${rate}<br>
+            Interest Generated= ${I}<br>
+            Annual Interest is in the non-taxable limit of Rs. ${limit}.<br>
+            No Tax Amount(TDS) to be Deducted<br>
+            A = ${A}<br><br>
+            </div>
+            <br><br>`;
+        }
+    }
+
+    document.getElementById('analysis').innerHTML += `
+    <div id="conclusion">
+    CONCLUSION<br>
+    Maximum Possible Interest = Rs. ${maximum_possible_interest.toFixed(2)}<br>
+    Maximum Possible Amount = Rs. ${maximum_possible_amount.toFixed(2)}<br>
+    Total Tax Deducted = Rs. ${total_tax.toFixed(2)}<br>
+    Interest Earned = Rs. ${(A-principal-total_tax).toFixed(2)}<br>
+    Total Amount Generated = Rs. ${(A-total_tax).toFixed(2)}<br>
+    </div>`;
+
+}
+    </script>
 
 </head>
 <body>
     <form id="details" align="center">
+    
     Principal<br>
     <input type="number" class="textboxes" id="principal"><br>
     Rate<br>
@@ -23,6 +195,12 @@
     AGE<br>
     <label class="options"><input type="radio" name="age" class="age" value="40000">Less Than 60</label><br>
     <label class="options"><input type="radio" name="age" class="age" value="50000">More Than 60</label><br>
+    <br>
+    COMPOUNDING FREQUENCY<br>
+    <label class="options"><input type="radio" name="frequency" class="frequency" value="1">Annually</label><br>
+    <label class="options"><input type="radio" name="frequency" class="frequency" value="2">Half-Yearly</label><br>
+    <label class="options"><input type="radio" name="frequency" class="frequency" value="4">Quarterly</label><br>
+    <label class="options"><input type="radio" name="frequency" class="frequency" value="12">Monthly</label><br>
     <br>
     <input type="button" class="buttons" value="Analyse" onclick="incomplete_data_check()"><br><br>
     <input type="button" class="buttons" value="Clear Data" onclick="clear_data()">
